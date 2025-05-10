@@ -30,7 +30,7 @@ namespace Tensor {
       typedef Scalar_ Scalar;
       typedef Index_ Index;
       typedef ResourcePolicy_ ResourcePolicy;
-      typedef typename ResourcePolicy::template ptr<Scalar[]> ScalarPtr;
+      typedef typename ResourcePolicy::template ptr<Scalar> ScalarPtr;
       typedef TensorInterface<Tensor<Scalar_, Index_, ResourcePolicy_>> Base;
 
       // Metadata
@@ -64,7 +64,7 @@ namespace Tensor {
       Tensor() : _size(0) {}
 
       TENSOR_SFINAE(UniqueResourcePolicy)
-      Tensor(const std::vector<size_t>& shape, const std::string& name = "")
+      Tensor(const std::vector<Index>& shape, const std::string& name = "")
         : Base(name),
           _size(utils::product(shape)),
           _data(std::make_unique<Scalar[]>(_size)), 
@@ -76,9 +76,22 @@ namespace Tensor {
       }
 
       TENSOR_SFINAE(UniqueResourcePolicy)
-      Tensor(std::initializer_list<size_t> shape)
-        : Tensor(std::vector<size_t>(shape)) 
+      Tensor(std::initializer_list<Index> shape)
+        : Tensor(std::vector<Index>(shape)) 
       { /* do nothing */ }
+
+      TENSOR_SFINAE(SharedResourcePolicy)
+      Tensor(const std::vector<Index>& shape, Scalar* data, const std::string& name = "")
+        : Base(name),
+          _size(utils::product(shape)),
+          _data(data), // No ownership transfer
+          _shape(shape)
+      {
+        if (_size == 0) {
+          throw std::runtime_error("Tensor size cannot be zero.");
+        }
+        std::cout << "SharedResourcePolicy constructor called" << std::endl;
+      }
 
     private:
       Index                _size;
