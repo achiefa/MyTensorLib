@@ -24,14 +24,14 @@ namespace Tensor {
    * SFINAE (Substitution Failure Is Not An Error) is used to allow 
    * the use of different constructors for different resource policies.
    */
-  template <typename Scalar_, typename Index_ = std::size_t, typename ResourcePolicy_ = UniqueResourcePolicy>
-  class Tensor : public TensorInterface<Tensor<Scalar_, Index_, ResourcePolicy_>> {
+  template <typename Scalar_, typename ResourcePolicy_ = UniqueResourcePolicy, typename Index_ = std::size_t>
+  class Tensor : public TensorInterface<Tensor<Scalar_, ResourcePolicy_, Index_>> {
     public:
       typedef Scalar_ Scalar;
       typedef Index_ Index;
       typedef ResourcePolicy_ ResourcePolicy;
       typedef typename ResourcePolicy::template ptr<Scalar> ScalarPtr;
-      typedef TensorInterface<Tensor<Scalar_, Index_, ResourcePolicy_>> Base;
+      typedef TensorInterface<Tensor<Scalar_, ResourcePolicy_, Index_>> Base;
 
       // Metadata
       Scalar* data() const { return _data.get(); } // Do we want to expose this when it is a map?
@@ -111,8 +111,8 @@ namespace Tensor {
   };
 
   // Specialization for Tensor
-  template <typename Scalar_, typename Index_, typename ResourcePolicy_>
-  struct TensorInfo<Tensor<Scalar_, Index_, ResourcePolicy_>> {
+  template <typename Scalar_, typename ResourcePolicy_, typename Index_>
+  struct TensorInfo<Tensor<Scalar_, ResourcePolicy_, Index_>> {
       
     typedef Scalar_ Scalar;
     typedef Index_ Index;
