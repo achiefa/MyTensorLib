@@ -1,3 +1,5 @@
+#include <memory>
+
 namespace Tensor {
 
   class SharedResourcePolicy {

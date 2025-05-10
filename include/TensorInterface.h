@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include "ResourcePolicy.h"
 #include "TensorInfo.h"
 #include "utils.h"
